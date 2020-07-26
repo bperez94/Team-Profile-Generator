@@ -9,36 +9,50 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+// array to hold employee answers
+const employeeArray = [];
 
-
-// Write code to use inquirer to gather information about the development team members,
-// and to create objects for each team member (using the correct classes as blueprints!)
-function employeeInfo() {
-    return inquirer.prompt ([
+// function to controll question flow
+function employeeType() {
+    inquirer.prompt ([
         {
-            type:"input",
+            type:"checkbox",
             name:"name",
-            message:"What is your name?"
-
-        },
-        {
-            type:"input",
-            name:"id",
-            message:"what is your id number?",
-        },
-        {
-            type:"input",
-            name:"email",
-            message:"What is your email?",
-        },
-        {
-            type:"input",
-            name:"role",
-            message:"what is your role?",
-        },
+            message:"What is your position?",
+            choices:[
+                "manager","engineer","intern",
+            ]
+        } 
 
     ])
+    .then((employType) => {
+       // console.log("\n\nmanger-"+ employType.name+"-" +"eval "+(employType.name == "manager"));
+           if (employType.name == "manager") {
+          managerInfo()
+          .then((employ) => {
+            console.log("sucess");
+          }).catch((err) => {
+              console.log(err.message);
+          });
+
+    }
+    else if (employType.name == "intern") {
+       internInfo();
+    }
+
+    else {
+        engineerInfo();
+    }
+
+    }).catch((err) => {
+        console.log(err.message)
+    });
+   // console.log(employeeType);
+  
+
 }
+
+
 function managerInfo() {
     return inquirer.prompt ([
         {
@@ -68,10 +82,24 @@ function managerInfo() {
             message:"What is your office number?"
 
         },
-        
-
-    ])
+     ])
+     // logs answers
+     .then((employType) => {
+         console.log(employType);
+         const managerAnswer = new Manager(
+             employType.name,
+             employType.id,
+             employType.email,
+             employType.role,
+             employType.officeNumer
+         );// sends logged answers to an array
+         employeeArray.push(managerAnswer);
+     }).catch((err) => {
+         console.log(err.message);
+     });
 }
+
+
 function engineerInfo() {
     return inquirer.prompt ([
         {
@@ -102,7 +130,22 @@ function engineerInfo() {
         },
 
     ])
+    .then((employType) => {
+        console.log(employType);
+        const engineerAnswers = new Engineer(
+            employType.name,
+            employType.id,
+            employType.email,
+            employType.role,
+            employType.officeNumer
+        );// sends logged answers to an array
+        employeeArray.push(engineerAnswers);
+    }).catch((err) => {
+        console.log(err.message);
+    });
 }
+
+
 function internInfo() {
     return inquirer.prompt ([
         {
@@ -133,21 +176,40 @@ function internInfo() {
         },
         
     ])
+    .then((employType) => {
+        console.log(employType);
+        const internAnswers = new Intern(
+            employType.name,
+            employType.id,
+            employType.email,
+            employType.role,
+            employType.officeNumer
+        );// sends logged answers to an array
+        employeeArray.push(internAnswers);
+    }).catch((err) => {
+        console.log(err.message);
+    });
+    
 }
-employeeInfo();
-managerInfo();
-engineerInfo();
-internInfo();
+employeeType()
+
+function sendInfo() {
+    console.log("information saved");
+    fs.writeFileSync(outputPath,render(employeeArray),"utf-8");
+}
+function init() {
+    sendInfo()
+}
+console.log(sendInfo);
+init();
 
 
 // After the user has input all employees desired, call the `render` function (requiredn
 // above) and pass in an array containing all employee objects; the `render` function will
 // generate and return a block of HTML including templated divs for each employee!
-/*function init() {
-    employeeInfo()
-}
 
-init();*/
+
+
 // After you have your html, you're now ready to create an HTML file using the HTML
 // returned from the `render` function. Now write it to a file named `team.html` in the
 // `output` folder. You can use the variable `outputPath` above target this location.
