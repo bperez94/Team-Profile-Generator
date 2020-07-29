@@ -10,7 +10,8 @@
 This app allows users to create employee profiles which contain different contact information.
     
 ## Installation
-run " npm i"
+1- run "git clone" 
+2- run " npm i"
     
 ## Known bugs
 n/a
