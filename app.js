@@ -5,7 +5,7 @@ const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
 
-const OUTPUT_DIR = path.resolve(__dirname, "output");
+const OUTPUT_DIR = path.resolve(__dirname, "");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
@@ -20,7 +20,7 @@ function employeeType() {
             name:"name",
             message:"What is your position?",
             choices:[
-                "manager","engineer","intern",
+                "manager","engineer","intern"
             ]
         } 
 
@@ -31,6 +31,7 @@ function employeeType() {
           managerInfo()
           .then((employ) => {
             console.log("sucess");
+            sendInfo();
           }).catch((err) => {
               console.log(err.message);
           });
@@ -40,10 +41,14 @@ function employeeType() {
        internInfo();
     }
 
+    /*else if(employType.name == "no more needed") {
+        return("creating team html");
+    }*/
+    
     else {
         engineerInfo();
     }
-
+    
     }).catch((err) => {
         console.log(err.message)
     });
@@ -94,6 +99,7 @@ function managerInfo() {
              employType.officeNumer
          );// sends logged answers to an array
          employeeArray.push(managerAnswer);
+         sendInfo();
      }).catch((err) => {
          console.log(err.message);
      });
@@ -140,6 +146,7 @@ function engineerInfo() {
             employType.officeNumer
         );// sends logged answers to an array
         employeeArray.push(engineerAnswers);
+        sendInfo();
     }).catch((err) => {
         console.log(err.message);
     });
@@ -186,22 +193,22 @@ function internInfo() {
             employType.officeNumer
         );// sends logged answers to an array
         employeeArray.push(internAnswers);
+        employType()
+        sendInfo();
     }).catch((err) => {
         console.log(err.message);
     });
+   
     
 }
 employeeType()
 
 function sendInfo() {
-    console.log("information saved");
     fs.writeFileSync(outputPath,render(employeeArray),"utf-8");
 }
-function init() {
-    sendInfo()
-}
-console.log(sendInfo);
-init();
+
+
+
 
 
 // After the user has input all employees desired, call the `render` function (requiredn
